@@ -82,17 +82,17 @@
 </head>
 <body>
 
-  <h1>Gestor de Imágenes (ImgBB + Firebase)</h1>
+  <h1>Galería de fotos</h1>
 
   <div class="upload-box">
     <h3>Subir nueva imagen</h3>
     <input type="file" id="imageInput" accept="image/*">
     <br>
-    <button id="uploadBtn">Subir a colección aleatoria</button>
+    <button id="uploadBtn">Subir</button>
     <div id="status"></div>
   </div>
 
-  <h2>Galería de Imágenes (Base de Datos)</h2>
+  <h2>Galería de Imágenes</h2>
   <div id="gallery" class="grid"></div>
 
   <!-- Carga de Firebase v10+ mediante CDN (ES Modules) -->
@@ -143,7 +143,7 @@
       }
 
       statusDiv.style.color = "blue";
-      statusDiv.textContent = "Subiendo a ImgBB...";
+      statusDiv.textContent = "Subiendo";
 
       try {
         // Preparar FormData para la API de ImgBB
@@ -158,7 +158,7 @@
         const data = await response.json();
 
         if (data.success) {
-          statusDiv.textContent = "Guardando en la base de datos...";
+          statusDiv.textContent = "Guardando...";
 
           // Seleccionar una colección aleatoria
           const randomCollection = collectionsList[Math.floor(Math.random() * collectionsList.length)];
@@ -176,7 +176,7 @@
           await addDoc(collection(db, randomCollection), newImageData);
 
           statusDiv.style.color = "green";
-          statusDiv.textContent = `¡Éxito! Guardado en la colección: "${randomCollection}"`;
+          statusDiv.textContent = `¡Éxito!"`;
           imageInput.value = "";
         } else {
           throw new Error(data.error ? data.error.message : "Error al subir a ImgBB");
@@ -222,7 +222,7 @@
       const imagesArray = Object.values(imagesObj);
 
       if (imagesArray.length === 0) {
-        galleryDiv.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>No hay imágenes en la base de datos.</p>";
+        galleryDiv.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>No hay imágenes.</p>";
         return;
       }
 
@@ -232,10 +232,9 @@
         card.innerHTML = `
           <img src="${imgData.url}" alt="Imagen BD">
           <div class="card-body">
-            <p><strong>Colección:</strong> ${imgData.collection}</p>
-            <p><a href="${imgData.url}" target="_blank">Ver enlace CDN</a></p>
+            <p><a href="${imgData.url}" target="_blank">Ver imagen en grande</a></p>
           </div>
-          <button class="btn-delete" data-id="${imgData.id}" data-collection="${imgData.collection}">Eliminar de la BD</button>
+          <button class="btn-delete" data-id="${imgData.id}" data-collection="${imgData.collection}">Eliminar foto</button>
         `;
         galleryDiv.appendChild(card);
       });
@@ -252,7 +251,7 @@
 
     // 3. Eliminar únicamente el registro de Firestore (permanece en ImgBB)
     async function deleteFromDatabase(collName, docId) {
-      if (confirm("¿Estás seguro de eliminar este registro de la base de datos? La imagen seguirá alojada en ImgBB.")) {
+      if (confirm("¿Estás seguro de eliminar esta foto?")) {
         try {
           await deleteDoc(doc(db, collName, docId));
         } catch (error) {
